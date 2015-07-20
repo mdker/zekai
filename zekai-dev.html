@@ -136,7 +136,6 @@
 <script src="zekai.js"></script>
 <title></title>
 <script>
-var zek = zekai;
 window.onload = function() {
 	var path = location.hash.substr(1);
 	var handler = function(src) {
@@ -145,7 +144,7 @@ window.onload = function() {
 			var w = window.open();
             w.document.title = path;
             w.document.body.style.backgroundColor = 'black';
-            var o = w.eval(zek.compile(zek.grammar().struct('{' + editor.getValue() + '}')));
+            var o = w.eval(zekai.compile(zekai.grammar().struct('{' + editor.getValue() + '}')));
             w.document.body.appendChild(o.main());
 		};
 		var editor = CodeMirror.fromTextArea(document.getElementById('editor-div'), {
@@ -174,7 +173,9 @@ window.onload = function() {
 	};	
     if(!path) handler(welcome); else  {
         var code = '';
+        var z = zekai;
         window.zekai = function(_) { code = _.raw[0]; };
+        Object.keys(z).map(function(k) { window.zekai[k] = z[k]; });
         var e = document.createElement('script');
         e.src = path;
         e.onload = function() { handler(code); };
@@ -216,6 +217,9 @@ var welcome = function(){/*
 1) how to build, how to run Zekai
 2) make this sane?
 3) make an example
+
+node script?
+
 
 
 */}.toString().slice(15,-3)
