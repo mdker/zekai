@@ -214,7 +214,7 @@ it may serve as a basis for creating new programming languages.
 * Zekai should compile to WebAssembly, since it is not here yet,
 the best option is ECMAScript.
 
-* There is no need to introduce a new -standard- library. Better choose an existing library which fits the needed functionallity.
+* There is no need to introduce a new -standard- library. Better choose an existing library which fits the needed functionality.
 
 * There are no classes; no inheritance.
 
