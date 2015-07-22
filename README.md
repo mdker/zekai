@@ -233,7 +233,7 @@ new(class args=[]) {
 
 * The output of compiling the file _zekai_ is the same as zekai.js.
 
-* Code should be written to be statically type infereded.
+* Code should be written to be statically type inferred.
 
 * The implementation of the compiler translates Zekai code to ECMAScript.
 
@@ -273,7 +273,7 @@ read('zekai.js', function(err, data) {
 
 * It is not possible to know beforehand what IO API the software needs.
 
-* The IO system will always be present, preferently encapsulated in main.
+* The IO system will always be present, preferably encapsulated in main.
 
 * To get the compiled ECMAScript run:
 ```javascript
