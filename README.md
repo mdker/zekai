@@ -208,15 +208,13 @@ Zekai project is composed of the following files:
 
 ## Notes
 
-* Zekai was created as a project for personal study, and becoming mature,
+* Zekai was created as a project for personal study. Becoming mature,
 it may serve as a basis for creating new programming languages.
 
 * Zekai should compile to WebAssembly, since it is not here yet,
 the best option is ECMAScript.
 
 * There is no need to introduce a new -standard- library. Better choose an existing library which fits the needed functionallity.
-
-* The compiler is written in Zekai itself only to satisfy the curiosity on how the compiler would look. There is no practical reason.
 
 * There are no classes; no inheritance.
 
@@ -237,26 +235,11 @@ new(class args=[]) {
 
 * Code should be written to be statically type infereded.
 
-* The implementation of the compiler translates Zekai code to ECMAScript;
+* The implementation of the compiler translates Zekai code to ECMAScript.
 
-* Zekai works on any ECMAScript environment;
+    (Zekai works on any ECMAScript environment)
 
-* It is possible to compile Zekai code on Node. Example:
-```javascript
-
-eval(load(zekai))
-eval(zekai.compile(load(arguments)))
-
-```
-
-```javascript
-
-eval(load(zekai))
-eval(zekai.compile(load(arguments)))
-
-```
-
-For example, it is possible to run a Zekai program dynamically on a web browser environment:
+* A raw way to run Zekai code on a browser environment without using the editor:
 ```html
 <html>
 <head>
@@ -270,13 +253,35 @@ eval(zekai.compile('main(): alert(0)')).main()
 </html>
 ```
 
-* To run on Node, similarly include the file _zekai.js_ and call _zekai.compile_.
-
-* PORTABILITY
-
+* To run Zekai code in a Node environment:
+```javascript
+// ECMAScript
+var read = function(path, onload) { return require('file').readFile(path, onload); };
+read('zekai.js', function(err, data) {
+    eval(data);
+    read(arguments[2], function(err, data) {
+        eval(zekai.compile(data));
+    });
+});
+```
 
 * Another option is to save the compiled output, and load it as regular ECMAScript.
 
+* Pure code is always portable.
+
+* To write portable impure code, a layer is needed. Use a library.
+
+* It is not possible to know beforehand what IO API the software needs.
+
+* The IO system will always be present, preferently encapsulated in main.
+
+* To get the compiled ECMAScript run:
+```javascript
+main():
+    console.log(zekai.compile(code))
+```
+
+* To access files use zekai\` code \`
 
 
 ## License

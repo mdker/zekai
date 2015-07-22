@@ -211,17 +211,198 @@ var lexer = function(match,handle) {
     throw 'wrong lexer';
 };
 
-var welcome = function(){/*
-# zekai-dev v0.5
+var welcome = [
+    '# --------------',
+    '# zekai-dev v0.7',
+    '# --------------',
+    '#',
+    '#',
+    '# * Run:',
+    '#',
+    '#     F8 or Ctrl+Enter',
+    '#',
+    '#',
+    '# * Open an existing file:',
+    '#',
+    '#     Add \'#\' + <path> to the browser url',
+    '#',
+    '#     Example (file foo/bar): ' + window.location.href + '#foo/bar',
+    '#',
+    '#     Opens ' + window.location.href.substr(0,window.location.href.lastIndexOf('/')) + '/foo/bar',
+    ''
+].join('\n') + function(){/*
+#
+#
+# * More info:
+#
+#     http://github.com/lucazd/zekai
+#
+#
 
-1) how to build, how to run Zekai
-2) make this sane?
-3) make an example
+size  (v): v.length
+if    (v t e():if): v? t() e()
+for   (v f): v.map(f)
+rand  (n): Math.floor(Math.random() * n)
+range (i n): n >= 0? Array(n-i).join(' ').split(' ').map(\e v: v+i) []
+to    (n): range(0 n)
 
-node script?
+new(class args=[]) {
+	obj = { __proto__ = class.prototype }
+	class.apply(obj args)
+	obj
+}
 
+canvas(w h) {
+	c = document.createElement('canvas')
+	c.width <- w
+	c.height <- h
+	c
+}
 
+io(out main) {
+	in = input(out)
+	animate() {
+		main(in() out)
+		window.requestAnimationFrame(animate)
+	}
+	animate()
+    out
+}
 
+keycode = ['''''''CANCEL''''''HELP''''BACK_SPACE''TAB''''''CLEAR''ENTER''RETURN''''SHIFT''CONTROL''ALT'
+'PAUSE''CAPS_LOCK''KANA''EISU''JUNJA''FINAL''HANJA''''ESCAPE''CONVERT''NONCONVERT''ACCEPT''MODECHANGE'
+'SPACE''PAGE_UP''PAGE_DOWN''END''HOME''LEFT''UP''RIGHT''DOWN''SELECT''PRINT''EXECUTE''PRINTSCREEN''INSERT'
+'DELETE''''0''1''2''3''4''5''6''7''8''9''COLON''SEMICOLON''LESS_THAN''EQUALS''GREATER_THAN''QUESTION_MARK'
+'AT''A''B''C''D''E''F''G''H''I''J''K''L''M''N''O''P''Q''R''S''T''U''V''W''X''Y''Z''WIN''''CONTEXT_MENU'''
+'SLEEP''NUMPAD0''NUMPAD1''NUMPAD2''NUMPAD3''NUMPAD4''NUMPAD5''NUMPAD6''NUMPAD7''NUMPAD8''NUMPAD9''MULTIPLY'
+'ADD''SEPARATOR''SUBTRACT''DECIMAL''DIVIDE''F1''F2''F3''F4''F5''F6''F7''F8''F9''F10''F11''F12''F13''F14'
+'F15''F16''F17''F18''F19''F20''F21''F22''F23''F24''''''''''''''''''NUM_LOCK''SCROLL_LOCK''WIN_OEM_FJ_JISHO'
+'WIN_OEM_FJ_MASSHOU''WIN_OEM_FJ_TOUROKU''WIN_OEM_FJ_LOYA''WIN_OEM_FJ_ROYA''''''''''''''''''''CIRCUMFLEX'
+'EXCLAMATION''DOUBLE_QUOTE''HASH''DOLLAR''PERCENT''AMPERSAND''UNDERSCORE''OPEN_PAREN''CLOSE_PAREN''ASTERISK'
+'PLUS''PIPE''HYPHEN_MINUS''OPEN_CURLY_BRACKET''CLOSE_CURLY_BRACKET''TILDE''''''''''VOLUME_MUTE''VOLUME_DOWN'
+'VOLUME_UP''''''SEMICOLON''EQUALS''COMMA''MINUS''PERIOD''SLASH''BACK_QUOTE'''''''''''''''''''''''''''''''''''
+'''''''''''''''''''OPEN_BRACKET''BACK_SLASH''CLOSE_BRACKET''QUOTE''''META''ALTGR''''WIN_ICO_HELP''WIN_ICO_00'
+'''WIN_ICO_CLEAR''''''WIN_OEM_RESET''WIN_OEM_JUMP''WIN_OEM_PA1''WIN_OEM_PA2''WIN_OEM_PA3''WIN_OEM_WSCTRL'
+'WIN_OEM_CUSEL''WIN_OEM_ATTN''WIN_OEM_FINISH''WIN_OEM_COPY''WIN_OEM_AUTO''WIN_OEM_ENLW''WIN_OEM_BACKTAB''ATTN'
+'CRSEL''EXSEL''EREOF''PLAY''ZOOM''''PA1''WIN_OEM_CLEAR''']
+
+input(out) {
+	buf = { x=0  y=0  w=1 h=1 z=0 dx=0 dy=0 key={} }
+	in  = { x=~1 y=~1 w=1 h=1 z=0 dx=0 dy=0 key={} }
+	window.addEventListener('keydown' \e {
+		buf.key[keycode[e.keyCode]] <- true
+		e.preventDefault()
+		e.stopPropagation()
+    })
+	window.addEventListener('keyup' \e {
+		buf.key[keycode[e.keyCode]] <- false
+		e.preventDefault()
+		e.stopPropagation()
+    })
+	out.addEventListener('mousedown' \e {
+		e.button == 2? false buf.z <- 1
+		true
+    })
+	out.addEventListener('mouseup' \e {
+		e.button == 2? false buf.z <- 0
+		true
+    })
+	out.addEventListener('mousemove' \e {
+		buf.x <- e.pageX - out.offsetLeft
+		buf.y <- e.pageY - out.offsetTop
+    })
+	\{
+		in.x <- (out.width /parseInt(out.style.width)) * buf.x
+		in.y <- (out.height/parseInt(out.style.height)) * buf.y
+		!in.z & buf.z? in.z <- 1 in.z == 2 & !buf.z? in.z <- 3 in.z <- buf.z? 2 0
+		Object.keys(buf.key).map(\i:
+			!in.key[i] & buf.key[i]? in.key[i] <- 1 in.key[i] == 2 & !buf.key[i]? in.key[i] <- 3 in.key[i] <- buf.key[i]? 2 0
+        )
+		in
+    }
+}
+
+fill(out c x=0 y=0 w=out.width h=out.height a=1 blend='') {
+	q = out.getContext('2d')
+	q.save()
+	q.globalAlpha <- a
+	q.globalCompositeOperation <- blend
+	q.fillStyle <- c
+	q.fillRect(x y w h)
+	q.restore()
+}
+
+pong():
+	box = @{ x y w h }
+	hit(a b): a.x <= b.x+b.w & a.y <= b.y+b.h & b.x <= a.x+a.w & b.y <= a.y+a.h
+	pads = [box(10 80 10 40) box(180 80 10 40)]
+	ball = { x=100 y=100 w=5 h=5 vx=2.4 vy=0 }
+	io(canvas(200 200) \in out {
+		if(in.key.W    & pads[0].y > 0                      \: pads[0].y -= 3)
+        if(in.key.UP   & pads[1].y > 0                      \: pads[1].y -= 3)
+		if(in.key.S    & pads[0].y + pads[0].h < out.height \: pads[0].y += 3)
+		if(in.key.DOWN & pads[1].y + pads[1].h < out.height \: pads[1].y += 3)
+		ball.x += ball.vx
+		ball.y += ball.vy
+		if(hit(ball box(0 0 200 1)) | hit(ball box(0 100 200 1)) \: ball.vy *= ~1)
+		if(!hit(ball box(0 0 200 200)) \{
+			ball.x <- 100
+			ball.y <- 100
+        })
+		for(pads \p:
+			if(hit(ball p) \{
+				ball.vx *= ~1
+				ball.vy <- (rand(20) - 10) / 5
+            })
+        )
+		fill(out 'black')
+		fill(out 'white' 100 0 2 200)
+		for(pads \p: fill(out 'white' p.x p.y p.w p.h))
+		fill(out '#fd0' ball.x ball.y ball.w ball.h)
+    })
+
+import(url onload) {
+    e = document.createElement('script')
+    e.src <- url
+    e.onload <- onload
+    document.head.appendChild(e)
+}
+
+demo() {
+	out = canvas(200 200)
+    import('http://threejs.org/build/three.min.js' \{
+        scene = new(THREE.Scene)
+        mater = new(THREE.MeshBasicMaterial [{ color=0xFF0000 wireframe=true }])
+        mesh = new(THREE.Mesh [new(THREE.SphereGeometry [10 10 10]) mater])
+        gl = new(THREE.WebGLRenderer [{ antialias=true canvas=out }])
+        camera = new(THREE.PerspectiveCamera [60 out.width/out.height 1 3 * 1500])
+        scene.add(mesh)
+        camera.position.z <- 30
+        io(out \{
+            mesh.rotation.y += 0.02
+            mesh.rotation.x += 0.01
+            gl.render(scene camera)
+        })
+    })
+	out
+}
+
+life():
+	has(g i j): i >= 0 & i < size(g) & j >= 0 & j < size(g[i])? g[i][j] 0
+	add(a b): a + b
+	grid = to(40).map(\:to(40).map(\:rand(2)))
+	io(canvas(200 200) \in out:
+		grid <- grid.map(\row i: row.map(\c j {
+			n = range(~1 2).map(\a: range(~1 2).map(\b:
+				!a & !b? 0 has(grid i+a j+b)
+			).reduce(add)).reduce(add)
+			v = n == 2? c n == 3? 1 0
+			fill(out v? '#fd0' 'black' j*5 i*5 5 5)
+			v
+        }))
+    )
+
+main(): [pong demo life][rand(3)]()
 */}.toString().slice(15,-3)
 </script>
 </head>
