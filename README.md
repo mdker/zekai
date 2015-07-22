@@ -8,7 +8,7 @@ Its simple [source code (150 lines)](https://github.com/lucazd/zekai/blob/master
 
 * [Download zekai.zip](https://github.com/lucazd/zekai/archive/master.zip), extract it and open the file _zekai-dev.html_.
 
-	Or [Try it online](http://htmlpreview.github.io/?https://rawgit.com/lucazd/zekai/master/zekai-dev.html).
+	Or [**Try it online**](http://htmlpreview.github.io/?https://github.com/lucazd/zekai/master/zekai-dev.html).
 
 * Type in the following zekai code:
 ```javascript
