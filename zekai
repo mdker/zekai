@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 zekai`
 
 # Copyright (c) 2015, Lucas Domanico
@@ -108,4 +109,116 @@ zekai = {
 	last   (v): v[size(v)-1]
 }
 
+=======
+zekai`
+
+# Copyright (c) 2015, Lucas Domanico
+
+zekai = {
+
+	grammar(): {
+		w       = regex('^([ \\t\\r\\n,;]|(\\#.*)|(\\\/\/.*))*')
+		id      = regex('^[\\$A-Za-z_][\\$A-Za-z_\\d]*'           'id')
+		num     = regex('^((0[xX][0-9a-fA-F]+)|(\\d+(\\.\\d+)?))' 'num')
+		str     = regex('^(["\'])((\\\\(\\1|\\\\))|.)*?\\1'       'str')
+		array   = rule(\:[token('[')  w list(expr w) w token(']')] 'array')
+		struct  = rule(\:[token('{')  w list(def w)  w token('}')] 'struct')
+		lambda  = rule(\:[token('\\') w list(def w)  w case([inline block])] 'lambda')
+		expr    = rule(\:[list(case([not neg])) case([lit let ref par]) list(case([field index call])) list(case([iif arith]))] 'expr')
+		lit     = rule(\:[case([num str array struct lambda model])])
+		def     = rule(\:[case([init arg])])
+		init    = rule(\:[id w case([x_a x_b])] 'def')
+		arg     = rule(\:[id] 'def')
+		ref     = rule(\:[id] 'ref')
+		par     = rule(\:[token('(') w expr w token(')')] 'par')
+		field   = rule(\:[token('.') w id]                '$field')
+		index   = rule(\:[token('[') w expr w token(']')] '$index')
+		call    = rule(\:[token('(') w list(expr w) w token(')')] '$call')
+        x_a     = rule(\:[token('=') w expr])
+        x_b     = rule(\:[token('(') w list(def w) w token(')') w case([inline block])] 'lambda')
+		neg     = rule(\:[token('~')] '$neg')
+		not     = rule(\:[token('!')] '$not')
+        iif     = rule(\:[w token('?') w expr w expr] '$iif')
+		arith   = rule(\:[w case(op('<- += -= *= /= %= ^= + - * / % ^ == != >= <= > < | &' '$op')) w expr] '$arith')
+		inline  = rule(\:[token(':') w expr] 'inline')
+		block   = rule(\:[token('{') w list(case([local expr]) w) w token('}')] 'block')
+        local   = rule(\:[id w case([x_a x_b])] 'local')
+        let     = rule(\:[id w case([x_a x_b]) w expr] 'let')
+        model   = rule(\:[token('@') w token('{') w list(def w) w token('}')] 'model')
+	}
+
+	ir(tag text args pos):
+		tag == 'id'? words.indexOf(text) >= 0? head(text).toUpperCase() + tail(text) text
+		tag == 'num' | tag == 'str'? text
+		tag == 'array'?  '[' + args.join(',') + ']'
+		tag == 'struct'? '(function() { var self = {};' + args[0].map(\e: 'var ' + e.id + ' = self.' + e.id + ' = ' + e.expr + '; ').join('') + 'return self; })()'
+		tag == 'lambda'? 'function(' + args[0].map(\e:e.id).join(',') + ') { ' + args[0].map(\e: e.expr? 'if(' + e.id + '===undefined)' + e.id + '=' + e.expr + '; ' '').join('') + args[1] + ' }'
+		tag == 'inline'?  'return ' + args[0] + ';'
+		tag == 'block'?  size(args[0]) == 1? 'return ' + args[0][0] + ';' take(args[0]).map(\e: e + '; ').join('') + 'return ' + last(args[0]) + ';'
+		tag == 'local'?  'var ' + args[0] + ' = ' + args[1]
+		tag == 'let'?    '(function(' + args[0] + ') { return ' + args[2] + '; })(' + args[1] + ')'
+		tag == 'ref'?    args[0]
+		tag == 'expr'?   args[3].reduce(\a b: b(a) args[2].reduce(\a b: b(a) args[0].reduce(\a b: b(a) args[1])))
+		tag == '$field'? args[1] + '.' + args[0]
+		tag == '$index'? args[1] + '[' + args[0] + ']'
+		tag == '$call'?  args[1] + '(' + args[0].join(',') + ')'
+		tag == '$neg'?   '-' + args[0]
+		tag == '$not'?   '!' + args[0]
+		tag == '$arith'? args[0]([args[2] args[1]])
+		tag == '$op'?    text == '^'? args[0][0] + '.concat(' + args[0][1] + ')' args[0][0] + (text == '<-'? '=' text == '&'? '&&' text == '|'? '||' text == '=='? '===' text == '!='? '!==' text) + args[0][1]
+		tag == '$bool'?  args[0]([args[2] args[1]])
+		tag == '$iif'?   args[2] + '?' + args[0] + ':' + args[1]
+		tag == 'model'?  ir('lambda' '' [args[0].map(\e:{ id=e.id + '$' expr='' }) 'return ' + ir('struct' '' [args[0].map(\e:{ id=e.id expr=e.id + '$!==undefined?' + e.id + '$:' + (e.expr? e.expr 'undefined._') })]) + ';'])
+		tag == 'par'?    '(' + args[0] + ')'
+		alert('+' + tag + '+' + text + JSON.stringify(args) + pos)
+
+	compile(ast target=ir):
+		args = ast.data.map(\e: compile(e target))
+		!ast.tag? args
+		ast.tag == 'def'? { id=args[0] expr=size(args) > 1? args[1] '' }
+		ast.tag[0] == '$'? \e post=true: target(ast.tag ast.text args ^ [e post])
+		target(ast.tag ast.text args ast.pos)
+
+	words   = ('break case const catch continue debugger default delete do else finally for function if in instanceof ' +
+               'new return switch this throw try typeof var void while with class enum export extends import super ' +
+               'implements interface let package private protected public static yield').split(' ')
+
+	many    = ''
+	skip    = ' '
+	ast     = @{ pos=0 tag=skip data=[] length=~1 text='' }
+	leaf    (pos tag text length): ast(pos tag [] length text)
+	fail    (pos): ast(pos)
+	isfail  (ast): ast.length == ~1
+	push    (ast): ast.tag == skip? ast.data [ast]
+	pass    (s i=0): ast(i skip [] 0)
+	op      (ops name): ops.split(' ').map(\op: token(op name))
+	regex   (re name=skip): \s i=0: e = s.substr(i).match(RegExp(re)); e? leaf(i name e[0] size(e[0])) fail(i)
+	token   (chars name=skip): \s i=0: s.substr(i size(chars)) == chars? leaf(i name chars size(chars)) fail(i)
+	case    (rules): \s i=0: fold(pair(fail(i) true) rules \q r: q.second? e = r(s i); pair(e isfail(e)) q).first
+	rule    (rules name=skip): \s i=0:
+				e = fold(triple([] true 0) rules() \q r:
+                    q.second?
+                        w = r(s i+q.third)
+                        isfail(w)? triple([w] false 0) triple(q.first ^ push(w) true q.third + w.length)
+                    q)
+				e.second? ast(i name e.first e.third) head(e.first)
+	list    (rule sep=pass): \s i=0:
+				e = rule(s i)
+                isfail(e)? ast(i many [] 0)
+                a = sep(s i+e.length)
+                isfail(a)? ast(i many push(e) e.length)
+				b = list(rule sep)(s i+e.length+a.length)
+                ast(i many push(e) ^ b.data e.length+a.length+b.length)
+
+	pair   = @{ first second }
+	triple = @{ first second third }
+    fold   (t v f i=0): i < size(v)? fold(f(t v[i] i) v f i+1) t
+	size   (v): v.length
+	take   (v n=~1): v.slice(0 n)
+	tail   (v n=1): v.slice(n)
+	head   (v): v[0]
+	last   (v): v[size(v)-1]
+}
+
+>>>>>>> 86caecde0ec40d4097409975b16f4558d519ab60
 `
