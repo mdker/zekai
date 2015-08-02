@@ -126,7 +126,7 @@ bar(a b) {
 }
 ```
 
-* Commas and dots are not necessary, but can be used to improve readability
+* Commas and semi-colons are not necessary, but can be used to improve readability
 
 * **Let** expressions are a definition and an expression (`id = expr expr`). Example:
 ```javascript
@@ -142,13 +142,13 @@ main() {
 }
 ```
 
-*  A **Model** is syntactic sugar for a _function that returns a structure with the arguments as fields_
+*  An _Initializer_ (**init**) is syntactic sugar for a _function that returns a structure with the arguments as fields_
 ```javascript
 foo(a b): { a=a b=b }
 
-@bar(a b)
+bar(a b)@
 
-foo = @{ a b }
+foo = \a b@ # no need to write code like this
 ```
 
 * **Conditional** expressions `cond? true false`. Example:
