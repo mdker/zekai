@@ -70,7 +70,7 @@ io(out main) {
 		window.requestAnimationFrame(animate)
 	}
 	animate()
-    out
+    document.body.appendChild(out)
 }
 
 fill(out c x=0 y=0 w=out.width h=out.height a=1 blend='') {
