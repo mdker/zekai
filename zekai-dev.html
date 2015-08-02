@@ -146,7 +146,7 @@ window.onload = function() {
                 '<ht'+'ml><head><title>&#9655; ' + path + '</title></head><body style="background:#0A0A0A"><s'+'cript>' +
                 '(' +
                     zekai.compile(zekai.grammar().struct('{' + editor.getValue() + '}')) +
-                ').main()</s'+'cript></body></ht'+'ml>'], {type: 'text/html'}));
+                ').main()</s'+'cript></bo'+'dy></ht'+'ml>'], {type: 'text/html'}));
 			var w = window.open(url);
             /*
             var w = window.open();
@@ -186,7 +186,6 @@ window.onload = function() {
         window.zekai = function(_) { code = _.raw[0]; };
         Object.keys(z).map(function(k) { window.zekai[k] = z[k]; });
         var e = document.createElement('script');
-        e.type = 'application/javascript';
         e.src = path;
         e.onload = function() { handler(code); };
         document.head.appendChild(e);
