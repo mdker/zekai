@@ -245,7 +245,7 @@ new(class args=[]) {
 <head>
 <script src="zekai.js"></script>
 <script>
-eval(zekai.compile('main(): alert(0)')).main()
+eval(zekai.module('main(): alert(0)')).main()
 </script>
 </head>
 <body>
@@ -260,7 +260,7 @@ var read = function(path, onload) { return require('file').readFile(path, onload
 read('zekai.js', function(err, data) {
     eval(data);
     read(arguments[2], function(err, data) {
-        eval(zekai.compile(data));
+        eval(zekai.module(data));
     });
 });
 ```
@@ -278,7 +278,7 @@ read('zekai.js', function(err, data) {
 * To get the compiled ECMAScript run:
 ```javascript
 main():
-    console.log(zekai.compile(code))
+    console.log(zekai.module(code))
 ```
 
 * To access files use zekai\` code \`
