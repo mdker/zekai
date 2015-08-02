@@ -217,7 +217,7 @@ var lexer = function(match,handle) {
     if(r = match('^([\\$A-Za-z_][\\$A-Za-z_\\d]*)')) {
         return false? handle(r,0x78D4BF,'stat') : handle(r,0xFFFFFF,'variable');
     }
-    if(r = match('^([\\?])'))                               return handle(r,0xFFDD00,'cond');
+    if(r = match('^((\\?:)|[\\?])'))                               return handle(r,0xFFDD00,'cond');
     if(r = match('^([@{}&\\|\\[\\]=;\\?])'))                 return handle(r,0xFFDD00,'operator');
     if(r = match('^(\\W)'))                                 return handle(r,0xFFDD00,'variable');
     throw 'wrong lexer';

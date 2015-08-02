@@ -18,7 +18,7 @@ zekai = {
         set     = rule(\:[id w case([var func])] 'def')
         arg     = rule(\:[id] 'def')
         ref     = rule(\:[id] 'ref')
-        par     = rule(\:[token('(') w expr w token(')')] 'par')
+        par     = rule(\:[token('(') w list(expr w) w token(')')] 'par')
         field   = rule(\:[token('.') w id]                '$field')
         index   = rule(\:[token('[') w expr w token(']')] '$index')
         call    = rule(\:[token('(') w list(expr w) w token(')')] '$call')
@@ -27,13 +27,12 @@ zekai = {
         neg     = rule(\:[token('~')] '$neg')
         not     = rule(\:[token('!')] '$not')
         iif     = rule(\:[w token('?') w expr w expr] '$iif')
-        arith   = rule(\:[w case(op('<- += -= *= /= %= ^= + - * / % ^ << >> == != >= <= > < ||| &&& || && | &' '$op')) w expr] '$arith')
+        arith   = rule(\:[w case(op('?: <- += -= *= /= %= ^= + - * / % ^ << >> == != >= <= > < ||| &&& || && | &' '$op')) w expr] '$arith')
         inline  = rule(\:[token(':') w expr] 'inline')
-        block   = rule(\:[token('{') w list(stat w) w token('}')] 'block')
+        block   = rule(\:[token('{') w list(case([local expr]) w) w token('}')] 'block')
         local   = rule(\:[id w case([var func])] 'local')
         let     = rule(\:[id w case([var func]) w expr] 'let')
         init    = rule(\:[token('@')] 'init')
-        stat    = rule(\:[case([local expr])])
     }
 
     ir(tag text args pos):
@@ -55,11 +54,11 @@ zekai = {
         tag == '$neg'?   '-' + args[0]
         tag == '$not'?   '!' + args[0]
         tag == '$arith'? args[0]([args[2] args[1]])
-        tag == '$op'?    text == '^'? args[0][0] + '.concat(' + args[0][1] + ')' args[0][0] + (text == '<-'? '=' text == '&'? '&&' text == '|'? '||' text == '|||'? '|' text == '&&&'? '&' text == '=='? '===' text == '!='? '!==' text) + args[0][1]
+        tag == '$op'?    text == '?:'? args[0][0] + '?' + args[0][1] + ':false' text == '^'? args[0][0] + '.concat(' + args[0][1] + ')' args[0][0] + (text == '<-'? '=' text == '&'? '&&' text == '|'? '||' text == '|||'? '|' text == '&&&'? '&' text == '=='? '===' text == '!='? '!==' text) + args[0][1]
         tag == '$bool'?  args[0]([args[2] args[1]])
         tag == '$iif'?   args[2] + '?' + args[0] + ':' + args[1]
         tag == 'init'?   ''
-        tag == 'par'?    '(' + args[0] + ')'
+        tag == 'par'?    size(args[0]) == 1? '(' + args[0][0] + ')' '(function() { ' + ir('block' '' [args[0]] pos) + ' })()'
         abort()
 
     compile(ast target=ir):
