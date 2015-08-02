@@ -112,13 +112,4 @@ zekai = {
     last   (v): v[size(v)-1]
 }
 
-
-main() {
-    src = codex
-    c = zekai.compile(zekai.grammar().struct('{' + src + '}'))
-    e = eval(c)
-    cc = e.zekai.compile(e.zekai.grammar().struct('{' + src + '}'))
-    console.log(c)
-}
-
 `
