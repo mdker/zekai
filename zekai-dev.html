@@ -148,7 +148,6 @@ window.onload = function() {
                     zekai.compile(zekai.grammar().struct('{' + editor.getValue() + '}')) +
                 ').main()</s'+'cript></body></ht'+'ml>'], {type: 'text/html'}));
 			var w = window.open(url);
-            w.codex = codex;
             /*
             var w = window.open();
             w.document.title = path;
@@ -187,6 +186,7 @@ window.onload = function() {
         window.zekai = function(_) { code = _.raw[0]; };
         Object.keys(z).map(function(k) { window.zekai[k] = z[k]; });
         var e = document.createElement('script');
+        e.type = 'application/javascript';
         e.src = path;
         e.onload = function() { handler(code); };
         document.head.appendChild(e);
