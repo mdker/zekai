@@ -165,7 +165,7 @@ main() {
 abs(a): a < 0? ~a a
 ```
 
-*  _Updates_ uses the symbol `<-`. Note it is best to avoid side-effects, or at least limit them in the main function.
+*  _Updates_ uses the symbol `<-`. (see [Notes]())
 ```javascript
 main() {
 	s = ''
@@ -231,6 +231,7 @@ new(class args=[]) {
 	obj
 }
 ```
+* Use a strategy to encapuslate side-effects (ie; forbid them outside of _main_)
 
 * The output of compiling the file _zekai_ is the same as zekai.js.
 
