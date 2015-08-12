@@ -231,7 +231,7 @@ new(class args=[]) {
 	obj
 }
 ```
-* Use a strategy to encapuslate side-effects (ie; forbid them outside of _main_).
+* Use a strategy to encapsulate side-effects (ie; forbid them outside of _main_).
 
 * Code should be written to be statically type inferred.
 
