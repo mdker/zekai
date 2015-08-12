@@ -143,13 +143,13 @@ main() {
 }
 ```
 
-*  A structure (**struct**) is syntactic sugar for a _function that returns an object with the arguments as fields_
+*  A **struct** is syntactic sugar for a _function that returns an object with the arguments as fields_
 ```javascript
 foo(a b): { a=a b=b }
 
 bar(a b)@
 
-foo = \a b@ # no need to write code like this
+foo = \i=0 j=0 @
 ```
 
 * **Conditional** expressions `cond? true false`. Example:
@@ -217,13 +217,13 @@ the best option is ECMAScript.
 
 * There is no need to introduce a new -standard- library. Better choose an existing library which fits the needed functionality.
 
-* There are no classes; no inheritance.
+* Structs instead of classes emphasize there is no inheritance.
 
 * There are not keywords.
 
-* Both null and undefined should never be referred, unless working with an ECMAScript library.
+* Both `null` and `undefined` should never be referred, unless working with an ECMAScript library.
 
-* There is no new. To call ECMAScript library functions use:
+* There is no `new` idiom. To call ECMAScript library functions use:
 ```javascript
 new(class args=[]) {
 	obj = { __proto__ = class.prototype }
@@ -231,11 +231,11 @@ new(class args=[]) {
 	obj
 }
 ```
-* Use a strategy to encapuslate side-effects (ie; forbid them outside of _main_)
-
-* The output of compiling the file _zekai_ is the same as zekai.js.
+* Use a strategy to encapuslate side-effects (ie; forbid them outside of _main_).
 
 * Code should be written to be statically type inferred.
+
+* Static check analysis can be done by formatting the compiled ECMAScript and then using [Flow](http://flowtype.org/).
 
 * The implementation of the compiler translates Zekai code to ECMAScript.
 
@@ -269,13 +269,7 @@ read('zekai.js', function(err, data) {
 
 * Another option is to save the compiled output, and load it as regular ECMAScript.
 
-* Pure code is always portable.
-
-* To write portable impure code, a layer is needed. Use a library.
-
-* It is not possible to know beforehand what IO API the software needs.
-
-* The IO system will always be present, preferably encapsulated in main.
+* The output of compiling the file _zekai_ is the content of zekai.js.
 
 * To get the compiled ECMAScript run:
 ```javascript
@@ -283,7 +277,14 @@ main():
     console.log(zekai.program(code))
 ```
 
-* To access files use zekai\` code \`
+* Pure code is portable on virtual machines.
+
+* To write portable impure code, a layer/library is needed.
+
+* It is not possible to know beforehand what kind of IO actions the software needs.
+
+* Source files should start with `zekai\`` and end with `\`` to bypass the browser's
+local file access.
 
 
 ## License
