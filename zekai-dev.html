@@ -138,19 +138,17 @@
 <script>
 window.onload = function() {
     var path = location.hash.substr(1);
-    var loc = path? location.href.substr(0, location.href.lastIndexOf('#')) : location.href;
-    var dir = loc.substr(0, loc.lastIndexOf('/'));
-    alert(dir)
 	var handler = function(src) {
 		document.title = path? path : 'zekai-dev';
 		var action_run = function() {
             var url = URL.createObjectURL(new Blob([
-                '<ht'+'ml><head><sc'+'ript src="'+dir+'/zekai.js" type="text/javascr'+'ipt"></sc'+'ript><title>&#9655; ' + path + '</title></head><body style="background:#0A0A0A; padding:0; margin:0"><s'+'cript>' +
+                '<ht'+'ml><head><title>&#9655; ' + path + '</title></head><body style="background:#0A0A0A; padding:0; margin:0"><s'+'cript>' +
                 'var code = ' + JSON.stringify(editor.getValue()) + ';' +
                 '(' +
                     zekai.program(editor.getValue()) +
                 ').main()</s'+'cript></bo'+'dy></ht'+'ml>'], {type: 'text/html'}));
 			var w = window.open(url);
+            w.zekai = zekai;
             /*
             var w = window.open();
             w.document.title = path;
