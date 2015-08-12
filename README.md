@@ -165,7 +165,7 @@ main() {
 abs(a): a < 0? ~a a
 ```
 
-*  _Updates_ uses the symbol `<-`. (see [Notes](Notes))
+*  _Updates_ uses the symbol `<-`. (see _Notes_)
 ```javascript
 main() {
 	s = ''
