@@ -231,7 +231,7 @@ new(class args=[]) {
 	obj
 }
 ```
-* Use a strategy to encapsulate side-effects (ie; forbid them outside of _main_).
+* Use a strategy to encapsulate side-effects (for example; forbid them outside of _main_).
 
 * Code should be written to be statically type inferred.
 
@@ -269,7 +269,7 @@ read('zekai.js', function(err, data) {
 
 * Another option is to save the compiled output, and load it as regular ECMAScript.
 
-* The output of compiling the file _zekai_ is the content of zekai.js.
+* The output of compiling the file _zekai_ is the content of _zekai.js_.
 
 * To get the compiled ECMAScript run:
 ```javascript
