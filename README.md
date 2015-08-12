@@ -283,7 +283,7 @@ main():
 
 * It is not possible to know beforehand what kind of IO actions the software needs.
 
-* Source files should start with ```zekai```` and end with ``````` to bypass the browser's
+* Source files should start with ```zekai` ``` and end with ``` ` ``` to bypass the browser's
 local file access.
 
 
