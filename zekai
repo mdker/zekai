@@ -12,7 +12,7 @@ zekai = {
         array   = rule(\:[token('[')  w list(expr w) w token(']')] 'array')
         object  = rule(\:[token('{')  w list(def w)  w token('}')] 'object')
         lambda  = rule(\:[token('\\') w list(def w)  w case([struct inline block])] 'lambda')
-        expr    = rule(\:[list(case([not neg])) case([lit let ref par]) list(case([field index call])) list(case([iif arith]))] 'expr')
+        expr    = rule(\:[list(case([not neg])) case([lit let ref par]) list(case([field index call])) list(case([iif bin]))] 'expr')
         lit     = rule(\:[case([num str array object lambda])])
         def     = rule(\:[case([set arg])])
         set     = rule(\:[id w case([var func])] 'def')
@@ -27,7 +27,7 @@ zekai = {
         neg     = rule(\:[token('~')] '$neg')
         not     = rule(\:[token('!')] '$not')
         iif     = rule(\:[w token('?') w expr w expr] '$iif')
-        arith   = rule(\:[w case(op('?: <- += -= *= /= %= ^= + - * / % ^ << >> == != >= <= > < ||| &&& || && | &' '$op')) w expr] '$arith')
+        bin     = rule(\:[w case(op('?: <- += -= *= /= %= ^= + - * / % ^ << >> == != >= <= > < ||| &&& || && | &' '$op')) w expr] '$bin')
         inline  = rule(\:[token(':') w expr] 'inline')
         block   = rule(\:[token('{') w list(case([local expr]) w) w token('}')] 'block')
         local   = rule(\:[id w case([var func])] 'local')
@@ -53,7 +53,7 @@ zekai = {
         tag == '$call'?  args[1] + '(' + args[0].join(',') + ')'
         tag == '$neg'?   '-' + args[0]
         tag == '$not'?   '!' + args[0]
-        tag == '$arith'? args[0]([args[2] args[1]])
+        tag == '$bin'?   args[0]([args[2] args[1]])
         tag == '$op'?    text == '?:'? args[0][0] + '?' + args[0][1] + ':false' text == '^'? args[0][0] + '.concat(' + args[0][1] + ')' args[0][0] + (text == '<-'? '=' text == '&'? '&&' text == '|'? '||' text == '|||'? '|' text == '&&&'? '&' text == '=='? '===' text == '!='? '!==' text) + args[0][1]
         tag == '$bool'?  args[0]([args[2] args[1]])
         tag == '$iif'?   args[2] + '?' + args[0] + ':' + args[1]
