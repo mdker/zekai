@@ -194,6 +194,9 @@ function main() {
 Refer to the source code grammar for details.
 
 
+With the previous guidelines, refer to the actual language grammar defined in the [**source code**](http://htmlpreview.github.io/?https://github.com/lucazd/zekai/master/zekai-dev.html#zekai).
+
+
 ## Project files
 
 Zekai project is composed of the following files:
