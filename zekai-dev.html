@@ -145,7 +145,7 @@ window.onload = function() {
 		document.title = path? path : 'zekai-dev';
 		var action_run = function() {
             var url = URL.createObjectURL(new Blob([
-                '<ht'+'ml><head><sc'+'ript src="'+dir+'/zekai.js"></sc'+'ript><title>&#9655; ' + path + '</title></head><body style="background:#0A0A0A; padding:0; margin:0"><s'+'cript>' +
+                '<ht'+'ml><head><sc'+'ript src="'+dir+'/zekai.js" type="text/javascr'+'ipt"></sc'+'ript><title>&#9655; ' + path + '</title></head><body style="background:#0A0A0A; padding:0; margin:0"><s'+'cript>' +
                 'var code = ' + JSON.stringify(editor.getValue()) + ';' +
                 '(' +
                     zekai.program(editor.getValue()) +
