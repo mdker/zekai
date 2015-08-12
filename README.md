@@ -100,7 +100,7 @@ Basics:
 	|Number  |`7` `7.77` `0xAF`|_(same)_|
 	|String  |`'awesome'`      |_(same)_|
 	|Array   |`[1 2 3]`        |`[1,2,3]`|
-	|Struct  |`{ x=1 y=2 }`    |`{ x:1, y:2 }` _("objects" in ECMAScript)_|
+	|Object  |`{ x=1 y=2 }`    |`{ x:1, y:2 }`|
 	|Function|`\a b c: 0`      |`function(a,b,c) { return 0; }`|
 
 
@@ -143,7 +143,7 @@ main() {
 }
 ```
 
-*  An _Initializer_ (**init**) is syntactic sugar for a _function that returns a structure with the arguments as fields_
+*  A structure (**struct**) is syntactic sugar for a _function that returns an object with the arguments as fields_
 ```javascript
 foo(a b): { a=a b=b }
 
@@ -246,7 +246,7 @@ new(class args=[]) {
 <head>
 <script src="zekai.js"></script>
 <script>
-eval(zekai.module('main(): alert(0)')).main()
+eval(zekai.program('main(): alert(0)')).main()
 </script>
 </head>
 <body>
@@ -261,7 +261,7 @@ var read = function(path, onload) { return require('fs').readFile(path, onload);
 read('zekai.js', function(err, data) {
     eval(data);
     read(arguments[2], function(err, data) {
-        eval(zekai.module(data));
+        eval(zekai.program(data));
     });
 });
 ```
@@ -279,7 +279,7 @@ read('zekai.js', function(err, data) {
 * To get the compiled ECMAScript run:
 ```javascript
 main():
-    console.log(zekai.module(code))
+    console.log(zekai.program(code))
 ```
 
 * To access files use zekai\` code \`

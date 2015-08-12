@@ -145,7 +145,7 @@ window.onload = function() {
                 '<ht'+'ml><head><title>&#9655; ' + path + '</title></head><body style="background:#0A0A0A; padding:0; margin:0"><s'+'cript>' +
                 'var arg = ' + JSON.stringify(editor.getValue()) + ';' +
                 '(' +
-                    zekai.compile(zekai.grammar().struct('{' + editor.getValue() + '}')) +
+                    zekai.program(editor.getValue()) +
                 ').main()</s'+'cript></bo'+'dy></ht'+'ml>'], {type: 'text/html'}));
 			var w = window.open(url);
             /*

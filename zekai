@@ -10,10 +10,10 @@ zekai = {
         num     = regex('^((0[xX][0-9a-fA-F]+)|(\\d+(\\.\\d+)?))' 'num')
         str     = regex('^(["\'])((\\\\(\\1|\\\\))|.)*?\\1'       'str')
         array   = rule(\:[token('[')  w list(expr w) w token(']')] 'array')
-        struct  = rule(\:[token('{')  w list(def w)  w token('}')] 'struct')
-        lambda  = rule(\:[token('\\') w list(def w)  w case([init inline block])] 'lambda')
+        object  = rule(\:[token('{')  w list(def w)  w token('}')] 'object')
+        lambda  = rule(\:[token('\\') w list(def w)  w case([struct inline block])] 'lambda')
         expr    = rule(\:[list(case([not neg])) case([lit let ref par]) list(case([field index call])) list(case([iif arith]))] 'expr')
-        lit     = rule(\:[case([num str array struct lambda])])
+        lit     = rule(\:[case([num str array object lambda])])
         def     = rule(\:[case([set arg])])
         set     = rule(\:[id w case([var func])] 'def')
         arg     = rule(\:[id] 'def')
@@ -23,7 +23,7 @@ zekai = {
         index   = rule(\:[token('[') w expr w token(']')] '$index')
         call    = rule(\:[token('(') w list(expr w) w token(')')] '$call')
         var     = rule(\:[token('=') w expr])
-        func    = rule(\:[token('(') w list(def w) w token(')') w case([init inline block])] 'lambda')
+        func    = rule(\:[token('(') w list(def w) w token(')') w case([struct inline block])] 'lambda')
         neg     = rule(\:[token('~')] '$neg')
         not     = rule(\:[token('!')] '$not')
         iif     = rule(\:[w token('?') w expr w expr] '$iif')
@@ -32,16 +32,16 @@ zekai = {
         block   = rule(\:[token('{') w list(case([local expr]) w) w token('}')] 'block')
         local   = rule(\:[id w case([var func])] 'local')
         let     = rule(\:[id w case([var func]) w expr] 'let')
-        init    = rule(\:[token('@')] 'init')
+        struct  = rule(\:[token('@')] 'struct')
     }
 
     ir(tag text args pos):
         tag == 'id'? words.indexOf(text) >= 0? head(text).toUpperCase() + tail(text) text
         tag == 'num' | tag == 'str'? text
         tag == 'array'?  '[' + args.join(',') + ']'
-        tag == 'struct'? '(function() { var self = {};' + args[0].map(\e: 'var ' + e.id + ' = self.' + e.id + ' = ' + e.expr + '; ').join('') + 'return self; })()'
+        tag == 'object'? '(function() { var self = {};' + args[0].map(\e: 'var ' + e.id + ' = self.' + e.id + ' = ' + e.expr + '; ').join('') + 'return self; })()'
         tag == 'lambda'? args[1]? 'function(' + args[0].map(\e:e.id).join(',') + ') { ' + args[0].map(\e: e.expr? 'if(' + e.id + '===undefined)' + e.id + '=' + e.expr + '; ' '').join('') + args[1] + ' }'
-                         ir('lambda' '' [args[0].map(\e:{ id=e.id + '$' expr='' }) 'return ' + ir('struct' '' [args[0].map(\e:{ id=e.id expr=e.id + '$!==undefined?' + e.id + '$:' + (e.expr? e.expr 'undefined._') })]) + ';'])
+                         ir('lambda' '' [args[0].map(\e:{ id=e.id + '$' expr='' }) 'return ' + ir('object' '' [args[0].map(\e:{ id=e.id expr=e.id + '$!==undefined?' + e.id + '$:' + (e.expr? e.expr 'undefined._') })]) + ';'])
         tag == 'inline'? 'return ' + args[0] + ';'
         tag == 'block'?  size(args[0]) == 1? 'return ' + args[0][0] + ';' take(args[0]).map(\e: e + '; ').join('') + 'return ' + last(args[0]) + ';'
         tag == 'local'?  'var ' + args[0] + ' = ' + args[1]
@@ -57,7 +57,7 @@ zekai = {
         tag == '$op'?    text == '?:'? args[0][0] + '?' + args[0][1] + ':false' text == '^'? args[0][0] + '.concat(' + args[0][1] + ')' args[0][0] + (text == '<-'? '=' text == '&'? '&&' text == '|'? '||' text == '|||'? '|' text == '&&&'? '&' text == '=='? '===' text == '!='? '!==' text) + args[0][1]
         tag == '$bool'?  args[0]([args[2] args[1]])
         tag == '$iif'?   args[2] + '?' + args[0] + ':' + args[1]
-        tag == 'init'?   ''
+        tag == 'struct'? ''
         tag == 'par'?    size(args[0]) == 1? '(' + args[0][0] + ')' '(function() { ' + ir('block' '' [args[0]] pos) + ' })()'
         abort()
 
@@ -68,7 +68,7 @@ zekai = {
         ast.tag[0] == '$'? \e post=true: target(ast.tag ast.text args ^ [e post])
         target(ast.tag ast.text args ast.pos)
 
-    module(code): compile(grammar().struct('{' + code + '}'))
+    program(code): compile(grammar().object('{' + code + '}'))
 
     words   = ('break continue else for if return while case const catch debugger default delete do finally ' +
                'function in instanceof new switch this throw try typeof var void with class enum export extends ' +
